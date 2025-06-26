@@ -1,0 +1,10 @@
+game_name: "Three Perfect Players and an LLM"
+agents:
+  - type: PerfectAgent
+    name: "Perfect Player 1"
+  - type: PerfectAgent
+    name: "Perfect Player 2"
+  - type: PerfectAgent
+    name: "Perfect Player 3"
+  - type: LLMAgent
+    name: "LLM Player 4"
