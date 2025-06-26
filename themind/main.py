@@ -1,7 +1,7 @@
 import argparse
 import yaml
-from themind.game import Game
-from themind.agents import RandomAgent, PerfectAgent, NoisyAgent, DummyAgent, FastAgent
+from .game import Game
+from .agents import RandomAgent, PerfectAgent, NoisyAgent, DummyAgent, FastAgent
 
 def main():
     parser = argparse.ArgumentParser(description="Run The Mind game with a specified configuration.")

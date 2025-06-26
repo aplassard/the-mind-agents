@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import patch, MagicMock
 
-from themind.game import Deck, Game
-from themind.agents import Agent, AgentResponse
+from themind.game.game import Deck, Game
+from themind.agents.agents import Agent, AgentResponse
 
 
 class DummyAgent(Agent):

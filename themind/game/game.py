@@ -1,6 +1,6 @@
 import random
 from dataclasses import dataclass, field
-from themind.agents import Agent, AgentResponse
+from ..agents import Agent, AgentResponse
 
 
 @dataclass
