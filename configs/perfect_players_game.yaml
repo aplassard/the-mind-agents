@@ -1,0 +1,8 @@
+game_name: "Three Perfect Players Game"
+agents:
+  - type: PerfectAgent
+    name: "Perfect Player 1"
+  - type: PerfectAgent
+    name: "Perfect Player 2"
+  - type: PerfectAgent
+    name: "Perfect Player 3"
