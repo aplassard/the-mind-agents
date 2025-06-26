@@ -1,0 +1,14 @@
+game_name: "My First Mind Game"
+agents:
+  - type: PerfectAgent
+    name: "Perfect Player 1"
+  - type: NoisyAgent
+    name: "Noisy Player 1"
+    params:
+      offset: 3
+      noise: 1
+  - type: RandomAgent
+    name: "Random Player 1"
+    params:
+      min_wait: 10
+      max_wait: 50
