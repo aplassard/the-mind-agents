@@ -57,6 +57,12 @@ class Game:
         self.levels.append(level)
         self.deck = Deck()
 
+        cards_to_deal = self.current_level_number * len(self.players)
+        if cards_to_deal > 100: # A new deck has 100 cards
+            print(f"Game Over! Not enough cards in a new deck to deal for level {self.current_level_number}.")
+            self.game_over = True
+            return
+
         for player in self.players:
             hand = self.deck.deal(self.current_level_number)
             player.receive_hand(hand)
