@@ -1,7 +1,7 @@
 import uuid
 import os
 import json
-from .game import Game
+from ..game import Game
 from .agents import Agent
 
 

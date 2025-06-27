@@ -2,7 +2,7 @@ import pytest
 import os
 import json
 from unittest.mock import patch, MagicMock
-from themind.team import Team
+from themind.agents.team import Team
 from themind.agents import PerfectAgent
 
 
@@ -29,7 +29,7 @@ def test_team_initialization(agents):
     assert os.path.isdir(team.results_dir)
 
 
-@patch('themind.team.Game')
+@patch('themind.agents.team.Game')
 def test_play_games(mock_game, agents):
     """Tests that the play_games method plays the correct number of games."""
     # Arrange
@@ -43,7 +43,7 @@ def test_play_games(mock_game, agents):
     assert mock_game.call_count == num_games
 
 
-@patch('themind.team.Game')
+@patch('themind.agents.team.Game')
 def test_save_game_results(mock_game, agents, tmp_path):
     """Tests that the game results are saved correctly."""
     # Arrange

@@ -1,6 +1,6 @@
 import argparse
 import yaml
-from .team import Team
+from .agents.team import Team
 from .agents import AGENT_REGISTRY
 
 def main():
