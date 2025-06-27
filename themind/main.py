@@ -1,7 +1,6 @@
 import argparse
 import yaml
-from .agents.team import Team
-from .agents import AGENT_REGISTRY
+from .agents import AGENT_REGISTRY, team
 
 def main():
     parser = argparse.ArgumentParser(description="Run The Mind game with a specified configuration.")
