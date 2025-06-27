@@ -16,8 +16,8 @@ def create_test_config(tmp_path: Path, config_data: dict) -> str:
 
 
 @patch('themind.main.argparse.ArgumentParser')
-@patch('themind.main.Game')
-def test_successful_agent_creation(mock_game, mock_argparse, tmp_path):
+@patch('themind.main.Team')
+def test_successful_agent_creation(mock_team, mock_argparse, tmp_path):
     """
     Tests that the main script correctly creates agents from a valid config file.
     """
@@ -40,8 +40,8 @@ def test_successful_agent_creation(mock_game, mock_argparse, tmp_path):
     main()
 
     # Assert
-    mock_game.assert_called_once()
-    created_agents = mock_game.call_args[0][0]
+    mock_team.assert_called_once()
+    created_agents = mock_team.call_args[0][0]
 
     assert len(created_agents) == 2
     assert isinstance(created_agents[0], RandomAgent)
