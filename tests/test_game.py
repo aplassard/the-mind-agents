@@ -55,7 +55,7 @@ def test_agent_receive_hand():
     assert agent.hand == [2, 5, 8]
 
 
-@patch('themind.game.Deck.deal')
+@patch('themind.game.game.Deck.deal')
 def test_game_level_success(mock_deal: MagicMock):
     """Tests a successful playthrough of a level."""
     # Arrange
@@ -80,7 +80,7 @@ def test_game_level_success(mock_deal: MagicMock):
     assert mock_deal.call_count == 2
 
 
-@patch('themind.game.Deck.deal')
+@patch('themind.game.game.Deck.deal')
 def test_game_level_fail_out_of_order(mock_deal: MagicMock):
     """Tests that the game ends if a card is played out of order."""
     # Arrange
@@ -106,7 +106,7 @@ def test_game_level_fail_out_of_order(mock_deal: MagicMock):
     assert turn.player_who_played == "p2"
 
 
-@patch('themind.game.Deck.deal')
+@patch('themind.game.game.Deck.deal')
 def test_game_review(mock_deal: MagicMock):
     """Tests the game review functionality."""
     # Arrange
