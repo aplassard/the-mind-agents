@@ -1,5 +1,6 @@
 game_name: "Three Perfect Players and an LLM"
 num_games: 2
+results_dir: "./results"
 agents:
   - type: PerfectAgent
     name: "Perfect Player 1"

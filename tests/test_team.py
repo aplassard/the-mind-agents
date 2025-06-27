@@ -19,9 +19,10 @@ def test_team_initialization(agents):
     """Tests that the Team class is initialized correctly."""
     # Arrange
     num_games = 5
+    results_dir = "./test_results"
 
     # Act
-    team = Team(agents, num_games)
+    team = Team(agents, num_games, results_dir)
 
     # Assert
     assert team.agents == agents
@@ -48,8 +49,7 @@ def test_save_game_results(mock_game, agents, tmp_path):
     """Tests that the game results are saved correctly."""
     # Arrange
     num_games = 1
-    team = Team(agents, num_games)
-    team.results_dir = tmp_path
+    team = Team(agents, num_games, results_dir=str(tmp_path))
 
     # Mock the game and its levels/turns
     mock_game_instance = MagicMock()
@@ -73,7 +73,7 @@ def test_save_game_results(mock_game, agents, tmp_path):
     team.play_games()
 
     # Assert
-    game_dir = tmp_path / "1"
+    game_dir = tmp_path / team.team_guid / "1"
     assert os.path.isdir(game_dir)
 
     level_file = game_dir / "1.json"

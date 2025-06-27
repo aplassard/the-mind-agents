@@ -1,5 +1,6 @@
 game_name: "My First Mind Game"
 num_games: 5
+results_dir: "./results"
 agents:
   - type: PerfectAgent
     name: "Perfect Player 1"

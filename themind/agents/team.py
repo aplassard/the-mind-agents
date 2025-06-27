@@ -8,11 +8,11 @@ from .agents import Agent
 class Team:
     """Manages a team of agents playing multiple games of The Mind."""
 
-    def __init__(self, agents: list[Agent], num_games: int):
+    def __init__(self, agents: list[Agent], num_games: int, results_dir: str = "./results"):
         self.agents = agents
         self.num_games = num_games
         self.team_guid = str(uuid.uuid4())
-        self.results_dir = f"./results/{self.team_guid}"
+        self.results_dir = os.path.join(results_dir, self.team_guid)
         os.makedirs(self.results_dir, exist_ok=True)
 
     def play_games(self):

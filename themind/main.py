@@ -14,6 +14,7 @@ def main():
     game_name = config.get("game_name", "The Mind Game")
     agents_config = config.get("agents", [])
     num_games = config.get("num_games", 1)
+    results_dir = config.get("results_dir", "./results")
 
     agents = []
     for agent_conf in agents_config:
@@ -28,7 +29,7 @@ def main():
             raise ValueError(f"Unknown agent type: {agent_type}")
 
     print(f"Starting game: {game_name}")
-    team = Team(agents, num_games)
+    team = Team(agents, num_games, results_dir)
     team.play_games()
 
 if __name__ == "__main__":
