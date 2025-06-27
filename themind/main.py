@@ -1,7 +1,7 @@
 import argparse
 import yaml
 from .game import Game
-from .agents import RandomAgent, PerfectAgent, NoisyAgent, DummyAgent, FastAgent, LLMAgent
+from .agents import AGENT_REGISTRY
 
 def main():
     parser = argparse.ArgumentParser(description="Run The Mind game with a specified configuration.")
@@ -20,18 +20,9 @@ def main():
         agent_name = agent_conf.get("name", agent_type)
         agent_params = agent_conf.get("params", {})
 
-        if agent_type == "RandomAgent":
-            agents.append(RandomAgent(name=agent_name, **agent_params))
-        elif agent_type == "PerfectAgent":
-            agents.append(PerfectAgent(name=agent_name, **agent_params))
-        elif agent_type == "NoisyAgent":
-            agents.append(NoisyAgent(name=agent_name, **agent_params))
-        elif agent_type == "DummyAgent":
-            agents.append(DummyAgent(name=agent_name, **agent_params))
-        elif agent_type == "FastAgent":
-            agents.append(FastAgent(name=agent_name, **agent_params))
-        elif agent_type == "LLMAgent":
-            agents.append(LLMAgent(name=agent_name, **agent_params))
+        if agent_type in AGENT_REGISTRY:
+            agent_class = AGENT_REGISTRY[agent_type]
+            agents.append(agent_class(name=agent_name, **agent_params))
         else:
             raise ValueError(f"Unknown agent type: {agent_type}")
 
