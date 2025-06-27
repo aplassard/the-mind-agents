@@ -11,6 +11,7 @@ class Turn:
     recommended_actions: dict[str, AgentResponse]
     played_card: int
     player_who_played: str
+    correct_decision: bool
 
 
 @dataclass
@@ -94,20 +95,23 @@ class Game:
                 p for p in self.players if p.name == player_who_played_name
             )
 
+            all_remaining_cards = []
+            for p in self.players:
+                all_remaining_cards.extend(p.hand)
+
+            correct_decision = played_card == min(all_remaining_cards)
+
             turn = Turn(
                 last_played_card=last_played_card,
                 player_hands={p.name: p.hand.copy() for p in self.players},
                 recommended_actions=recommended_actions,
                 played_card=played_card,
                 player_who_played=player_who_played.name,
+                correct_decision=correct_decision,
             )
             level.turns.append(turn)
 
-            all_remaining_cards = []
-            for p in self.players:
-                all_remaining_cards.extend(p.hand)
-
-            if played_card != min(all_remaining_cards):
+            if not correct_decision:
                 correct_card = min(all_remaining_cards)
                 owner_of_correct_card = "unknown"
                 for p in self.players:

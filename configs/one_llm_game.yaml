@@ -1,4 +1,5 @@
 game_name: "Three Perfect Players and an LLM"
+num_games: 2
 agents:
   - type: PerfectAgent
     name: "Perfect Player 1"
