@@ -1,3 +1,5 @@
+from typing import Optional
+
 from .agents import Agent, AgentResponse
 from dotenv import load_dotenv
 from llmutils.llm_with_retry import call_llm_with_retry
@@ -6,7 +8,7 @@ from llmutils.self_healing import heal_llm_output
 load_dotenv()
 
 
-PROMPT = '''
+PROMPT = """
 You are playing "The Mind"
 Objective:
 As a team, play cards from 1-100 into a central pile in perfect ascending order. Successfully play all cards from all players' hands to pass a level. The number of cards per player increases with each level.
@@ -29,16 +31,28 @@ How many seconds do you want to wait before playing your next card? Your respons
 
 Your response should be in the format
 seconds: <number of seconds>
-'''
+"""
 
-game_state_prompt = '''
+game_state_prompt = """
 The most recent card played was {last_played_card}
 You have {hand} in your hand and your next card to be played is {next_card}
 There are {num_other_cards} remaining around the table
-'''
+"""
 
 
-def create_game_state(hand, last_played_card, num_other_cards):
+def create_game_state(
+    hand: list[int], last_played_card: int, num_other_cards: int
+) -> str:
+    """Creates a string describing the current game state for the LLM.
+
+    Args:
+        hand: The agent's current hand.
+        last_played_card: The last card played on the pile.
+        num_other_cards: The total number of cards in other players' hands.
+
+    Returns:
+        A formatted string describing the game state.
+    """
     return game_state_prompt.format(
         last_played_card=last_played_card,
         hand=hand,
@@ -47,7 +61,15 @@ def create_game_state(hand, last_played_card, num_other_cards):
     )
 
 
-def parse_message(message):
+def parse_message(message: str) -> Optional[int]:
+    """Parses the LLM's response to extract the number of seconds to wait.
+
+    Args:
+        message: The message from the LLM.
+
+    Returns:
+        The number of seconds to wait, or None if it could not be parsed.
+    """
     lines = message.splitlines()
     seconds = None
     for line in lines:
@@ -60,17 +82,38 @@ def parse_message(message):
 
 
 class LLMAgent(Agent):
+    """An agent that uses a large language model to decide how long to wait."""
+
     def __init__(
         self,
         name: str,
         model: str = "openai/gpt-4.1-mini",
     ):
+        """Initializes the LLMAgent.
+
+        Args:
+            name: The name of the agent.
+            model: The name of the language model to use.
+        """
         super().__init__(name)
         self.model = model
 
     def decide_move(
         self, last_played_card: int, num_other_cards: int
     ) -> AgentResponse:
+        """Uses an LLM to decide the best move.
+
+        The method creates a game state prompt, calls the LLM, and parses the
+        response. If the response is not in the expected format, it uses a
+        self-healing mechanism to attempt to fix it.
+
+        Args:
+            last_played_card: The last card played on the pile.
+            num_other_cards: The total number of cards in other players' hands.
+
+        Returns:
+            An AgentResponse with the card to play and the time to wait.
+        """
         game_state = create_game_state(self.hand, last_played_card, num_other_cards)
         message = PROMPT.format(game_state=game_state)
         response = call_llm_with_retry(self.model, message)
@@ -92,7 +135,7 @@ def parse_message(message):
             healed_response = heal_llm_output(
                 broken_text=response,
                 expected_format="seconds: <integer>",
-                instructions="Your response must be in the format 'seconds: <integer>'.",
+                instructions="Your task is to correct the provided text to match the specified format. Analyze the examples to understand the desired output. The text should only contain the corrected text that can be parsed by the parsing code.",
                 good_examples=["seconds: 10", "seconds: 5"],
                 bad_examples=["I think I will wait 5 seconds.", "10"],
                 parsing_code=parsing_code,

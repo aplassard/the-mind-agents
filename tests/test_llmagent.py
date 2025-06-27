@@ -38,6 +38,30 @@ def test_llmagent_decide_move_unit(mock_call_llm):
     assert response.time_to_wait == 12
     mock_call_llm.assert_called_once()
 
+@patch('themind.agents.llmagent.heal_llm_output')
+@patch('themind.agents.llmagent.call_llm_with_retry')
+def test_llmagent_decide_move_with_healing(mock_call_llm, mock_heal_llm):
+    """
+    Tests that the self-healing mechanism is triggered when the LLM
+    returns a malformed response.
+    """
+    # Arrange
+    mock_call_llm.return_value = "I think I will wait 5 seconds."
+    mock_heal_llm.return_value = "seconds: 5"
+    agent = LLMAgent(name="test_agent")
+    agent.receive_hand([10, 25, 60])
+
+    # Act
+    response = agent.decide_move(last_played_card=5, num_other_cards=3)
+
+    # Assert
+    assert isinstance(response, AgentResponse)
+    assert response.card_to_play == 10
+    assert response.time_to_wait == 5
+    mock_call_llm.assert_called_once()
+    mock_heal_llm.assert_called_once()
+
+
 @pytest.mark.integration
 def test_llmagent_decide_move_integration():
     """
