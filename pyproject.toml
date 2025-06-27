@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "llmutils",
     "openai>=1.91.0",
     "pytest>=8.4.1",
     "python-dotenv>=1.1.1",
@@ -12,4 +13,12 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["themind"]
+
+[tool.uv.sources]
+llmutils = { git = "https://github.com/aplassard/llm-utils.git" }
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: marks tests as integration tests (deselect with '-m \"not integration\"')"
+]
