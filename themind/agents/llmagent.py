@@ -17,7 +17,6 @@ def call_llm(prompt, model="openai/gpt-4.1-mini"):
             "role": "user",
             "content": prompt
         }])
-    print(completion)
     return completion.choices[0].message.content
 
 PROMPT = """
@@ -80,5 +79,4 @@ class LLMAgent(Agent):
         response = call_llm(message)
         time_to_wait = parse_message(response)
         card_to_play = min(self.hand)
-        print(f"Playing {card_to_play} after {time_to_wait} seconds")
         return AgentResponse(card_to_play=card_to_play, time_to_wait=time_to_wait)
