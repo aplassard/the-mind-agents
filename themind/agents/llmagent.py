@@ -115,7 +115,7 @@ class LLMAgent(Agent):
             An AgentResponse with the card to play and the time to wait.
         """
         game_state = create_game_state(self.hand, last_played_card, num_other_cards)
-        message = PROMPT.format(game_state=game_state)
+        message = PROMPT.format(game_state=game_state) + f"\n\nYour current strategy is:\n{self.notes}"
         response = call_llm_with_retry(self.model, message)
         time_to_wait = parse_message(response)
 
@@ -145,4 +145,19 @@ def parse_message(message):
 
         card_to_play = min(self.hand)
         return AgentResponse(card_to_play=card_to_play, time_to_wait=time_to_wait)
+
+    def review_game(self, game_history: dict):
+        """Reviews the game history and updates the agent's notes."""
+        prompt = f"""You are an expert player at the game The Mind. You have just completed a game and are reviewing your performance to improve your strategy. Below is the game history and your current notes.
+
+Game History:
+{game_history}
+
+Your Current Notes:
+{self.notes}
+
+Based on the game history, please update your notes to improve your strategy for the next game. Your notes should be a list of rules or heuristics that you will follow. Your response should only be the updated notes.
+"""
+        response = call_llm_with_retry(self.model, prompt)
+        self.notes = response
 

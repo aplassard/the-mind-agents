@@ -29,7 +29,12 @@ class Team:
             # Review game
             print("\n--- Reviewing Game ---")
             for agent in self.agents:
-                game.review_game(agent.name)
+                game.print_game_review(agent.name)
+
+            # Agents learn from the game
+            print("\n--- Agents Learning ---")
+            for agent in self.agents:
+                agent.review_game(self.get_game_history(game_number))
 
     def save_game_results(self, game: Game, game_number: int):
         """Saves the results of a single game to disk."""
@@ -45,6 +50,16 @@ class Team:
             level_file_path = os.path.join(game_dir, f"{level.level_number}.json")
             with open(level_file_path, 'w') as f:
                 json.dump(level_data, f, indent=4)
+
+    def get_game_history(self, game_number: int) -> dict:
+        """Retrieves the history of a single game from disk."""
+        game_dir = os.path.join(self.results_dir, str(game_number))
+        game_history = {}
+        for level_file in os.listdir(game_dir):
+            level_number = int(level_file.split('.')[0])
+            with open(os.path.join(game_dir, level_file), 'r') as f:
+                game_history[level_number] = json.load(f)
+        return game_history
 
     def _format_turn_data(self, turn) -> dict:
         """Formats the turn data into the desired dictionary structure."""

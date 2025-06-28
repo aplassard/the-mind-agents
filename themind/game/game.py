@@ -131,7 +131,7 @@ class Game:
 
         self.current_level_number += 1
 
-    def review_game(self, player_name: str):
+    def print_game_review(self, player_name: str):
         """Allows a player to review the game from their perspective."""
         for level in self.levels:
             print(f"\n--- Level {level.level_number} ---")
@@ -140,6 +140,11 @@ class Game:
                 print(f"  Last Card Played: {turn.last_played_card}")
                 total_cards_remaining = sum(len(hand) for hand in turn.player_hands.values())
                 print(f"  Total Cards Remaining on Table: {total_cards_remaining}")
+
+                # Display the hand of the player reviewing the game
+                if player_name in turn.player_hands:
+                    player_hand = turn.player_hands[player_name]
+                    print(f"  Your Hand: {player_hand}")
 
                 time_waited = turn.recommended_actions[turn.player_who_played].time_to_wait
                 print("  Action Taken:")

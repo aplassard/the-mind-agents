@@ -16,6 +16,14 @@ class Agent(ABC):
     def __init__(self, name: str):
         self.name = name
         self.hand: list[int] = []
+        self.notes: str = """You are an expert player at the game The Mind. Your goal is to play your cards in ascending order with your teammates without communicating. You have decided on the following strategy:
+
+1.  You will wait for a number of seconds equal to the value of your lowest card minus the last card played.
+2.  If you have the lowest card, you will play it.
+3.  If another player plays a card, you will reassess your hand and the new last played card.
+
+This strategy is based on the idea that the wait time itself is the only way to communicate. A shorter wait time implies a lower card.
+"""
 
     def receive_hand(self, hand: list[int]):
         """Receives a new hand of cards for the next level."""
@@ -35,6 +43,16 @@ class Agent(ABC):
         """
         pass
 
+    @abstractmethod
+    def review_game(self, game_history: dict):
+        """
+        Allows the agent to review a completed game and update its notes.
+
+        Args:
+            game_history: A dictionary containing the results of the last game.
+        """
+        pass
+
 
 class RandomAgent(Agent):
     """An agent that plays a random card and waits a random amount of time."""
@@ -49,6 +67,9 @@ class RandomAgent(Agent):
         time_to_wait = random.randint(self.min_wait, self.max_wait)
         return AgentResponse(card_to_play=card_to_play, time_to_wait=time_to_wait)
 
+    def review_game(self, game_history: dict):
+        pass
+
 
 class PerfectAgent(Agent):
     """An agent that plays perfectly, waiting exactly the difference between the last played card and its lowest card."""
@@ -57,6 +78,9 @@ class PerfectAgent(Agent):
         card_to_play = min(self.hand)
         time_to_wait = card_to_play - last_played_card
         return AgentResponse(card_to_play=card_to_play, time_to_wait=time_to_wait)
+
+    def review_game(self, game_history: dict):
+        pass
 
 
 class NoisyAgent(Agent):
@@ -82,6 +106,9 @@ class NoisyAgent(Agent):
         
         return AgentResponse(card_to_play=card_to_play, time_to_wait=noisy_time_to_wait)
 
+    def review_game(self, game_history: dict):
+        pass
+
 
 class DummyAgent(Agent):
     """A simple, deterministic agent for testing purposes."""
@@ -91,6 +118,9 @@ class DummyAgent(Agent):
         card_to_play = min(self.hand)
         return AgentResponse(card_to_play=card_to_play, time_to_wait=card_to_play)
 
+    def review_game(self, game_history: dict):
+        pass
+
 
 class FastAgent(Agent):
     """An agent that always plays its lowest card very quickly."""
@@ -98,3 +128,6 @@ class FastAgent(Agent):
     def decide_move(self, last_played_card: int, num_other_cards: int) -> AgentResponse:
         card_to_play = min(self.hand)
         return AgentResponse(card_to_play=card_to_play, time_to_wait=1)
+
+    def review_game(self, game_history: dict):
+        pass
