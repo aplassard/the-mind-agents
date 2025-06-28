@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 from themind.game.game import Deck, Game
+from themind.game.review import GameReviewer
 from themind.agents.agents import DummyAgent, FastAgent
 
 
@@ -105,7 +106,8 @@ def test_game_review(mock_deal: MagicMock):
     assert not game.game_over
 
     with patch('logging.info') as mock_logging:
-        game.print_game_review("p2", game_number=1)
+        reviewer = GameReviewer(game)
+        reviewer.print_game_review("p2", game_number=1)
         
         # Get the actual output from the mock
         actual_output = mock_logging.call_args[0][0]

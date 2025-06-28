@@ -27,7 +27,7 @@ def test_team_initialization(agents):
     # Assert
     assert team.agents == agents
     assert team.num_games == num_games
-    assert os.path.isdir(team.results_dir)
+    assert os.path.isdir(team.repo.results_dir)
 
 
 @patch('themind.agents.team.Game')

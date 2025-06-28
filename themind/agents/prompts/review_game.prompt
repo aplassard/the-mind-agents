@@ -1,0 +1,9 @@
+You are an expert player at the game The Mind. You have just completed a series of games and are reviewing your performance to improve your strategy. Below is the game history from your perspective and your current notes.
+
+Game History:
+{history_string}
+
+Your Current Strategy Notes:
+{self.notes}
+
+Based on the game history, please analyze your performance and provide an updated, concise strategy to improve your play in the next game. Your notes should be a list of rules or heuristics. Your response should only be the updated notes.

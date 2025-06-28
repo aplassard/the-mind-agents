@@ -1,12 +1,19 @@
 import logging
 from typing import Optional
-
+import os
 from .agents import Agent, AgentResponse
 from dotenv import load_dotenv
 from llmutils.llm_with_retry import call_llm_with_retry
 from llmutils.self_healing import heal_llm_output
 
 load_dotenv()
+
+
+def load_prompt(prompt_name: str) -> str:
+    """Loads a prompt from the prompts directory."""
+    prompt_path = os.path.join(os.path.dirname(__file__), "prompts", f"{prompt_name}.prompt")
+    with open(prompt_path, "r") as f:
+        return f.read()
 
 
 PROMPT = """
@@ -120,7 +127,8 @@ class LLMAgent(Agent):
             An AgentResponse with the card to play and the time to wait.
         """
         game_state = create_game_state(self.hand, last_played_card, num_other_cards)
-        message = PROMPT.format(game_state=game_state, notes=self.notes)
+        prompt = load_prompt("decide_move")
+        message = prompt.format(game_state=game_state, notes=self.notes)
         
         logging.debug(f"Agent '{self.name}' sending prompt to LLM: {message}")
         response = call_llm_with_retry(self.model, message)
@@ -166,16 +174,8 @@ def parse_message(message):
         history_string = "\n\n".join(game_reviews)
         logging.debug(f"Agent '{self.name}' reviewing game history: {history_string}")
 
-        prompt = f"""You are an expert player at the game The Mind. You have just completed a series of games and are reviewing your performance to improve your strategy. Below is the game history from your perspective and your current notes.
-
-Game History:
-{history_string}
-
-Your Current Strategy Notes:
-{self.notes}
-
-Based on the game history, please analyze your performance and provide an updated, concise strategy to improve your play in the next game. Your notes should be a list of rules or heuristics. Your response should only be the updated notes.
-"""
+        prompt = load_prompt("review_game")
+        
         logging.debug(f"Agent '{self.name}' sending review prompt to LLM: {prompt}")
         response = call_llm_with_retry(self.model, prompt)
         logging.debug(f"Agent '{self.name}' received updated notes from LLM: {response}")

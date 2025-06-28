@@ -1,6 +1,7 @@
 
 import pytest
 from themind.game.game import Game, Level, Turn
+from themind.game.review import GameReviewer
 from themind.agents.agents import DummyAgent, AgentResponse
 
 
@@ -32,7 +33,8 @@ def test_review_game_with_empty_hand():
     # Player 1, who has an empty hand, reviews the game.
     # This should not raise a KeyError.
     try:
-        game.print_game_review("Player 1")
+        reviewer = GameReviewer(game)
+        reviewer.print_game_review("Player 1")
     except KeyError:
         pytest.fail("review_game raised a KeyError when a player has an empty hand.")
 
@@ -40,7 +42,8 @@ def test_review_game_with_empty_hand():
     from unittest.mock import patch
 
     with patch('logging.info') as mock_logging:
-        game.print_game_review("Player 1")
+        reviewer = GameReviewer(game)
+        reviewer.print_game_review("Player 1")
         
         # Get the actual output from the mock
         actual_output = mock_logging.call_args[0][0]
