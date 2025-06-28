@@ -1,7 +1,8 @@
 import argparse
 import yaml
-from .game import Game
 from .agents import AGENT_REGISTRY
+from .agents.team import Team
+from .game import Game
 
 def main():
     parser = argparse.ArgumentParser(description="Run The Mind game with a specified configuration.")
@@ -13,6 +14,8 @@ def main():
 
     game_name = config.get("game_name", "The Mind Game")
     agents_config = config.get("agents", [])
+    num_games = config.get("num_games", 1)
+    results_dir = config.get("results_dir", "./results")
 
     agents = []
     for agent_conf in agents_config:
@@ -27,9 +30,8 @@ def main():
             raise ValueError(f"Unknown agent type: {agent_type}")
 
     print(f"Starting game: {game_name}")
-    game = Game(agents)
-    game.play()
-    game.review_game(agents[0].name) # Review from the perspective of the first agent
+    team = Team(agents, num_games, results_dir)
+    team.play_games()
 
 if __name__ == "__main__":
     main()
