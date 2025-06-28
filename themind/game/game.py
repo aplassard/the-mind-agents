@@ -1,4 +1,5 @@
 import random
+import logging
 from dataclasses import dataclass, field
 from ..agents import Agent, AgentResponse
 
@@ -60,7 +61,7 @@ class Game:
 
         cards_to_deal = self.current_level_number * len(self.players)
         if cards_to_deal > 100: # A new deck has 100 cards
-            print(f"Game Over! Not enough cards in a new deck to deal for level {self.current_level_number}.")
+            logging.info(f"Game Over! Not enough cards in a new deck to deal for level {self.current_level_number}.")
             self.game_over = True
             return
 
@@ -118,7 +119,7 @@ class Game:
                     if correct_card in p.hand:
                         owner_of_correct_card = p.name
                         break
-                print(
+                logging.info(
                     f"Game Over! Card {played_card} was played by {player_who_played.name}, "
                     f"but {owner_of_correct_card} had a lower card ({correct_card})."
                 )
@@ -131,24 +132,44 @@ class Game:
 
         self.current_level_number += 1
 
-    def review_game(self, player_name: str):
-        """Allows a player to review the game from their perspective."""
+    def print_game_review(self, player_name: str, game_number: int = None):
+        """Prints a review of the game from a player's perspective."""
+        review_text = self._generate_game_review_text(player_name, game_number)
+        logging.info(review_text)
+
+    def _generate_game_review_text(self, player_name: str, game_number: int = None) -> str:
+        """Generates the game review text from a player's perspective."""
+        review_lines = []
+        if game_number:
+            review_lines.append(f"Game {game_number}:")
+
         for level in self.levels:
-            print(f"\n--- Level {level.level_number} ---")
+            review_lines.append(f"\n--- Level {level.level_number} ---")
             for i, turn in enumerate(level.turns):
-                print(f"\nTurn {i + 1}:")
-                print(f"  Last Card Played: {turn.last_played_card}")
+                review_lines.append(f"\nTurn {i + 1}:")
+                review_lines.append(f"  Last Card Played: {turn.last_played_card}")
                 total_cards_remaining = sum(len(hand) for hand in turn.player_hands.values())
-                print(f"  Total Cards Remaining on Table: {total_cards_remaining}")
+                review_lines.append(f"  Total Cards Remaining on Table: {total_cards_remaining}")
+
+                # Display the hand of the player reviewing the game
+                if player_name in turn.player_hands:
+                    player_hand = turn.player_hands[player_name]
+                    review_lines.append(f"  Your Hand: {player_hand}")
 
                 time_waited = turn.recommended_actions[turn.player_who_played].time_to_wait
-                print("  Action Taken:")
-                print(f"    {turn.player_who_played} played card {turn.played_card} after waiting {time_waited}s.")
+                review_lines.append("  Action Taken:")
+                review_lines.append(f"    {turn.player_who_played} played card {turn.played_card} after waiting {time_waited}s.")
 
                 if player_name in turn.recommended_actions and turn.player_who_played != player_name:
                     player_action = turn.recommended_actions[player_name]
-                    print("  Your Recommendation:")
-                    print(
+                    review_lines.append("  Your Recommendation:")
+                    review_lines.append(
                         f"    You wanted to play card {player_action.card_to_play} "
                         f"and wait {player_action.time_to_wait}s."
                     )
+        return "\n".join(review_lines)
+    
+    def review_game(self, player_name: str, game_number: int = None):
+        """Prints a review of the game from a player's perspective."""
+        review_text = self._generate_game_review_text(player_name, game_number)
+        print(review_text)

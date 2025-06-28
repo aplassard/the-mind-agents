@@ -26,7 +26,7 @@ def test_llmagent_decide_move_unit(mock_call_llm):
     """
     # Arrange
     mock_call_llm.return_value = "seconds: 12"
-    agent = LLMAgent(name="test_agent")
+    agent = LLMAgent(name="test_agent", model_name="test_model")
     agent.receive_hand([10, 25, 60])
 
     # Act
@@ -48,7 +48,7 @@ def test_llmagent_decide_move_with_healing(mock_call_llm, mock_heal_llm):
     # Arrange
     mock_call_llm.return_value = "I think I will wait 5 seconds."
     mock_heal_llm.return_value = "seconds: 5"
-    agent = LLMAgent(name="test_agent")
+    agent = LLMAgent(name="test_agent", model_name="test_model")
     agent.receive_hand([10, 25, 60])
 
     # Act
@@ -70,7 +70,7 @@ def test_llmagent_decide_move_integration():
     It requires a valid OPENROUTER_API_KEY to be set in the environment.
     """
     # Arrange
-    agent = LLMAgent(name="integration_test_agent")
+    agent = LLMAgent(name="integration_test_agent", model_name="openai/gpt-4.1-mini")
     agent.receive_hand([30, 70])
 
     # Act

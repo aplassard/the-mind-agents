@@ -2,24 +2,7 @@ import pytest
 from unittest.mock import patch, MagicMock
 
 from themind.game.game import Deck, Game
-from themind.agents.agents import Agent, AgentResponse
-
-
-class DummyAgent(Agent):
-    """A simple, deterministic agent for testing purposes."""
-
-    def decide_move(self, last_played_card: int, num_other_cards: int) -> AgentResponse:
-        """Plays the lowest card in hand, waits for a time equal to its value."""
-        card_to_play = min(self.hand)
-        return AgentResponse(card_to_play=card_to_play, time_to_wait=card_to_play)
-
-
-class FastAgent(Agent):
-    """An agent that always plays its lowest card very quickly."""
-
-    def decide_move(self, last_played_card: int, num_other_cards: int) -> AgentResponse:
-        card_to_play = min(self.hand)
-        return AgentResponse(card_to_play=card_to_play, time_to_wait=1)
+from themind.agents.agents import DummyAgent, FastAgent
 
 
 def test_deck_creation():
@@ -121,15 +104,19 @@ def test_game_review(mock_deal: MagicMock):
     # Assert
     assert not game.game_over
 
-    with patch('builtins.print') as mock_print:
-        game.review_game("p2")
-        mock_print.assert_any_call("\n--- Level 1 ---")
-        mock_print.assert_any_call("\nTurn 1:")
-        mock_print.assert_any_call("  Last Card Played: 0")
-        mock_print.assert_any_call("  Total Cards Remaining on Table: 2")
-        mock_print.assert_any_call("  Action Taken:")
-        mock_print.assert_any_call("    p1 played card 15 after waiting 15s.")
-        mock_print.assert_any_call("  Your Recommendation:")
-        mock_print.assert_any_call(
-            "    You wanted to play card 25 and wait 25s."
-        )
+    with patch('logging.info') as mock_logging:
+        game.print_game_review("p2", game_number=1)
+        
+        # Get the actual output from the mock
+        actual_output = mock_logging.call_args[0][0]
+
+        # Assert that the expected strings are in the actual output
+        assert "Game 1:" in actual_output
+        assert "\n--- Level 1 ---" in actual_output
+        assert "\nTurn 1:" in actual_output
+        assert "  Last Card Played: 0" in actual_output
+        assert "  Total Cards Remaining on Table: 2" in actual_output
+        assert "  Action Taken:" in actual_output
+        assert "    p1 played card 15 after waiting 10s." in actual_output
+        assert "  Your Recommendation:" in actual_output
+        assert "    You wanted to play card 25 and wait 10s." in actual_output

@@ -1,5 +1,6 @@
 import argparse
 import yaml
+import logging
 from .agents import AGENT_REGISTRY
 from .agents.team import Team
 from .game import Game
@@ -11,6 +12,10 @@ def main():
 
     with open(args.config_file, 'r') as f:
         config = yaml.safe_load(f)
+
+    log_level_str = config.get("log_level", "INFO").upper()
+    log_level = getattr(logging, log_level_str, logging.INFO)
+    logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
 
     game_name = config.get("game_name", "The Mind Game")
     agents_config = config.get("agents", [])
@@ -27,9 +32,10 @@ def main():
             agent_class = AGENT_REGISTRY[agent_type]
             agents.append(agent_class(name=agent_name, **agent_params))
         else:
+            logging.error(f"Unknown agent type: {agent_type}")
             raise ValueError(f"Unknown agent type: {agent_type}")
 
-    print(f"Starting game: {game_name}")
+    logging.info(f"Starting game: {game_name}")
     team = Team(agents, num_games, results_dir)
     team.play_games()
 

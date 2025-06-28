@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from .agents import Agent, AgentResponse
@@ -87,16 +88,17 @@ class LLMAgent(Agent):
     def __init__(
         self,
         name: str,
-        model: str = "openai/gpt-4.1-mini",
+        model_name: str = "openai/gpt-4.1-mini",
     ):
         """Initializes the LLMAgent.
 
         Args:
             name: The name of the agent.
-            model: The name of the language model to use.
+            model_name: The name of the language model to use.
         """
         super().__init__(name)
-        self.model = model
+        self.model = model_name
+        logging.info(f"LLMAgent '{self.name}' initialized with model '{self.model}'.")
 
     def decide_move(
         self, last_played_card: int, num_other_cards: int
@@ -115,11 +117,16 @@ class LLMAgent(Agent):
             An AgentResponse with the card to play and the time to wait.
         """
         game_state = create_game_state(self.hand, last_played_card, num_other_cards)
-        message = PROMPT.format(game_state=game_state)
+        message = PROMPT.format(game_state=game_state) + f"\n\nYour current strategy is:\n{self.notes}"
+        
+        logging.debug(f"Agent '{self.name}' sending prompt to LLM: {message}")
         response = call_llm_with_retry(self.model, message)
+        logging.debug(f"Agent '{self.name}' received response from LLM: {response}")
+
         time_to_wait = parse_message(response)
 
         if time_to_wait is None:
+            logging.warning(f"Agent '{self.name}' could not parse LLM response. Attempting to heal.")
             parsing_code = '''
 def parse_message(message):
     lines = message.splitlines()
@@ -141,8 +148,34 @@ def parse_message(message):
                 parsing_code=parsing_code,
                 model_name=self.model,
             )
+            logging.debug(f"Agent '{self.name}' received healed response: {healed_response}")
             time_to_wait = parse_message(healed_response)
+            if time_to_wait is None:
+                logging.error(f"Agent '{self.name}' failed to heal LLM response. Falling back to default wait time.")
+                time_to_wait = 10  # Fallback
 
         card_to_play = min(self.hand)
+        logging.info(f"Agent '{self.name}' decided to play card {card_to_play} and wait {time_to_wait} seconds.")
         return AgentResponse(card_to_play=card_to_play, time_to_wait=time_to_wait)
+
+    def review_game(self, game_reviews: list[str]):
+        """Reviews the game history and updates the agent's notes."""
+        history_string = "\n\n".join(game_reviews)
+        logging.debug(f"Agent '{self.name}' reviewing game history: {history_string}")
+
+        prompt = f"""You are an expert player at the game The Mind. You have just completed a series of games and are reviewing your performance to improve your strategy. Below is the game history from your perspective and your current notes.
+
+Game History:
+{history_string}
+
+Your Current Notes:
+{self.notes}
+
+Based on the game history, please analyze your performance and provide an updated, concise strategy to improve your play in the next game. Your notes should be a list of rules or heuristics. Your response should only be the updated notes.
+"""
+        logging.debug(f"Agent '{self.name}' sending review prompt to LLM: {prompt}")
+        response = call_llm_with_retry(self.model, prompt)
+        logging.debug(f"Agent '{self.name}' received updated notes from LLM: {response}")
+        self.notes = response
+        logging.info(f"Agent '{self.name}' updated its notes.")
 
