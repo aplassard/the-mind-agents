@@ -1,6 +1,7 @@
 import uuid
 import os
 import json
+import logging
 from ..game import Game
 from .agents import Agent
 
@@ -13,28 +14,38 @@ class Team:
         self.num_games = num_games
         self.team_guid = str(uuid.uuid4())
         self.results_dir = os.path.join(results_dir, self.team_guid)
+        self.agent_review_histories: dict[str, list[str]] = {}
         os.makedirs(self.results_dir, exist_ok=True)
+        logging.info(f"Team {self.team_guid} created. Results will be saved to {self.results_dir}")
 
     def play_games(self):
         """Plays the specified number of games."""
         for i in range(self.num_games):
             game_number = i + 1
-            print(f"\n--- Starting Game {game_number} for Team {self.team_guid} ---")
+            logging.info(f"\n--- Starting Game {game_number} for Team {self.team_guid} ---")
             game = Game(self.agents)
             game.play()
 
             # Save game results
             self.save_game_results(game, game_number)
 
-            # Review game
-            print("\n--- Reviewing Game ---")
+            # Print game review for user
+            logging.info("\n--- Game Review ---")
             for agent in self.agents:
-                game.print_game_review(agent.name)
+                game.print_game_review(agent.name, game_number)
 
             # Agents learn from the game
-            print("\n--- Agents Learning ---")
+            logging.info("\n--- Agents Learning ---")
             for agent in self.agents:
-                agent.review_game(self.get_game_history(game_number))
+                # Generate the review text from the agent's perspective
+                review_text = game._generate_game_review_text(agent.name, game_number)
+                
+                # Append the new review to the agent's history
+                history = self.agent_review_histories.setdefault(agent.name, [])
+                history.append(review_text)
+
+                # Pass the full history of text-based reviews to the agent
+                agent.review_game(history)
 
     def save_game_results(self, game: Game, game_number: int):
         """Saves the results of a single game to disk."""

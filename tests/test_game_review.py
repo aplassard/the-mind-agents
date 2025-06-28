@@ -32,7 +32,7 @@ def test_review_game_with_empty_hand():
     # Player 1, who has an empty hand, reviews the game.
     # This should not raise a KeyError.
     try:
-        game.review_game("Player 1")
+        game.print_game_review("Player 1")
     except KeyError:
         pytest.fail("review_game raised a KeyError when a player has an empty hand.")
 
@@ -42,7 +42,7 @@ def test_review_game_with_empty_hand():
 
     f = io.StringIO()
     with redirect_stdout(f):
-        game.review_game("Player 1")
+        game.print_game_review("Player 1")
     output = f.getvalue()
 
     assert "Your Hand: []" in output
