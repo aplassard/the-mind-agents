@@ -88,16 +88,16 @@ class LLMAgent(Agent):
     def __init__(
         self,
         name: str,
-        model: str = "openai/gpt-4.1-mini",
+        model_name: str,
     ):
         """Initializes the LLMAgent.
 
         Args:
             name: The name of the agent.
-            model: The name of the language model to use.
+            model_name: The name of the language model to use.
         """
         super().__init__(name)
-        self.model = model
+        self.model = model_name
         logging.info(f"LLMAgent '{self.name}' initialized with model '{self.model}'.")
 
     def decide_move(

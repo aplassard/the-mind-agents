@@ -11,4 +11,5 @@ agents:
     name: "Perfect Player 3"
   - type: LLMAgent
     name: "LLM Player 4"
-    model: "deepseek/deepseek-chat-v3-0324:free"
+    params:
+      model_name: "deepseek/deepseek-chat-v3-0324:free"
