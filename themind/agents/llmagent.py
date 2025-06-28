@@ -174,7 +174,9 @@ def parse_message(message):
         history_string = "\n\n".join(game_reviews)
         logging.debug(f"Agent '{self.name}' reviewing game history: {history_string}")
 
-        prompt = load_prompt("review_game")
+        prompt = load_prompt("review_game").format(
+            history_string=history_string, self=self
+        )
         
         logging.debug(f"Agent '{self.name}' sending review prompt to LLM: {prompt}")
         response = call_llm_with_retry(self.model, prompt)
