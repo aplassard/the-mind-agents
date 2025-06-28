@@ -30,6 +30,9 @@ The current state of the game is
 
 How many seconds do you want to wait before playing your next card? Your response should be an integer number of seconds
 
+Your current strategy notes are
+{self.notes}"
+
 Your response should be in the format
 seconds: <number of seconds>
 """
@@ -117,7 +120,7 @@ class LLMAgent(Agent):
             An AgentResponse with the card to play and the time to wait.
         """
         game_state = create_game_state(self.hand, last_played_card, num_other_cards)
-        message = PROMPT.format(game_state=game_state) + f"\n\nYour current strategy is:\n{self.notes}"
+        message = PROMPT.format(game_state=game_state, notes=self.notes)
         
         logging.debug(f"Agent '{self.name}' sending prompt to LLM: {message}")
         response = call_llm_with_retry(self.model, message)

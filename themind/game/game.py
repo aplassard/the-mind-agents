@@ -47,6 +47,10 @@ class Game:
         self.levels: list[Level] = []
         self.current_level_number = 1
         self.game_over = False
+        self._win = False
+        self.level_lost = None
+        self.cards_played_on_loss = None
+        self.total_cards_on_loss = None
 
     def play(self):
         """Starts and runs the game until it's over."""
@@ -124,13 +128,25 @@ class Game:
                     f"but {owner_of_correct_card} had a lower card ({correct_card})."
                 )
                 self.game_over = True
+                self._win = False
+                self.level_lost = self.current_level_number
+                self.cards_played_on_loss = self.current_level_number * len(self.players) - len(all_remaining_cards)
+                self.total_cards_on_loss = self.current_level_number * len(self.players)
                 return
 
             last_played_card = played_card
             player_who_played.hand.remove(played_card)
             cards_in_play -= 1
 
+        if self.current_level_number == 12:
+            self._win = True
+            self.game_over = True
+
         self.current_level_number += 1
+
+    def is_win(self) -> bool:
+        """Returns True if the game was won, False otherwise."""
+        return self._win
 
     def print_game_review(self, player_name: str, game_number: int = None):
         """Prints a review of the game from a player's perspective."""
