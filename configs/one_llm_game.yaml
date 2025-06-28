@@ -1,6 +1,6 @@
 game_name: "Three Perfect Players and an LLM"
 log_level: "DEBUG"
-num_games: 2
+num_games: 5
 results_dir: "./results"
 agents:
   - type: PerfectAgent
@@ -12,4 +12,4 @@ agents:
   - type: LLMAgent
     name: "LLM Player 4"
     params:
-      model_name: "deepseek/deepseek-chat-v3-0324:free"
+      model_name: "deepseek/deepseek-r1:free"

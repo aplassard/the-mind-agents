@@ -15,6 +15,7 @@ class Team:
         self.team_guid = str(uuid.uuid4())
         self.results_dir = os.path.join(results_dir, self.team_guid)
         self.agent_review_histories: dict[str, list[str]] = {}
+        self.games: list[Game] = []
         os.makedirs(self.results_dir, exist_ok=True)
         logging.info(f"Team {self.team_guid} created. Results will be saved to {self.results_dir}")
 
@@ -24,6 +25,7 @@ class Team:
             game_number = i + 1
             logging.info(f"\n--- Starting Game {game_number} for Team {self.team_guid} ---")
             game = Game(self.agents)
+            self.games.append(game)
             game.play()
 
             # Save game results
@@ -46,6 +48,16 @@ class Team:
 
                 # Pass the full history of text-based reviews to the agent
                 agent.review_game(history)
+
+        for i, game in enumerate(self.games):
+            if not game.is_win():
+                game_number = i + 1
+                level_lost = game.level_lost
+                cards_played = game.cards_played_on_loss
+                total_cards = game.total_cards_on_loss
+                percent_played = (cards_played / total_cards) * 100 if total_cards > 0 else 0
+                logging.info(f"Game {game_number}: Lost on level {level_lost}, "
+                             f"cards played: {cards_played}/{total_cards} ({percent_played:.2f}%)")
 
     def save_game_results(self, game: Game, game_number: int):
         """Saves the results of a single game to disk."""

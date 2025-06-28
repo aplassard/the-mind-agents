@@ -13,6 +13,8 @@ class Turn:
     played_card: int
     player_who_played: str
     correct_decision: bool
+    correct_card: int | None = None
+    owner_of_correct_card: str | None = None
 
 
 @dataclass
@@ -20,6 +22,7 @@ class Level:
     """Represents a single level of the game."""
     level_number: int
     turns: list[Turn] = field(default_factory=list)
+    win: bool = False
 
 
 class Deck:
@@ -47,6 +50,10 @@ class Game:
         self.levels: list[Level] = []
         self.current_level_number = 1
         self.game_over = False
+        self._win = False
+        self.level_lost = None
+        self.cards_played_on_loss = None
+        self.total_cards_on_loss = None
 
     def play(self):
         """Starts and runs the game until it's over."""
@@ -119,18 +126,36 @@ class Game:
                     if correct_card in p.hand:
                         owner_of_correct_card = p.name
                         break
+                
+                turn.correct_card = correct_card
+                turn.owner_of_correct_card = owner_of_correct_card
+                level.win = False
+
                 logging.info(
                     f"Game Over! Card {played_card} was played by {player_who_played.name}, "
                     f"but {owner_of_correct_card} had a lower card ({correct_card})."
                 )
                 self.game_over = True
+                self._win = False
+                self.level_lost = self.current_level_number
+                self.cards_played_on_loss = self.current_level_number * len(self.players) - len(all_remaining_cards)
+                self.total_cards_on_loss = self.current_level_number * len(self.players)
                 return
 
             last_played_card = played_card
             player_who_played.hand.remove(played_card)
             cards_in_play -= 1
 
+        level.win = True
+        if self.current_level_number == 12:
+            self._win = True
+            self.game_over = True
+
         self.current_level_number += 1
+
+    def is_win(self) -> bool:
+        """Returns True if the game was won, False otherwise."""
+        return self._win
 
     def print_game_review(self, player_name: str, game_number: int = None):
         """Prints a review of the game from a player's perspective."""
@@ -160,6 +185,10 @@ class Game:
                 review_lines.append("  Action Taken:")
                 review_lines.append(f"    {turn.player_who_played} played card {turn.played_card} after waiting {time_waited}s.")
 
+                if not turn.correct_decision:
+                    review_lines.append("  Result: Incorrect move.")
+                    review_lines.append(f"    - The correct card to play was {turn.correct_card}, which was held by {turn.owner_of_correct_card}.")
+                
                 if player_name in turn.recommended_actions and turn.player_who_played != player_name:
                     player_action = turn.recommended_actions[player_name]
                     review_lines.append("  Your Recommendation:")
@@ -167,9 +196,13 @@ class Game:
                         f"    You wanted to play card {player_action.card_to_play} "
                         f"and wait {player_action.time_to_wait}s."
                     )
+            
+            # Add level summary
+            if level.win:
+                review_lines.append(f"\n--- Level {level.level_number} Summary ---")
+                review_lines.append("  Result: Level cleared successfully!")
+            else:
+                review_lines.append(f"\n--- Level {level.level_number} Summary ---")
+                review_lines.append("  Result: Level failed.")
+
         return "\n".join(review_lines)
-    
-    def review_game(self, player_name: str, game_number: int = None):
-        """Prints a review of the game from a player's perspective."""
-        review_text = self._generate_game_review_text(player_name, game_number)
-        print(review_text)
