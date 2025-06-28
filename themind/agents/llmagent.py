@@ -31,7 +31,7 @@ The current state of the game is
 How many seconds do you want to wait before playing your next card? Your response should be an integer number of seconds
 
 Your current strategy notes are
-{self.notes}"
+{notes}
 
 Your response should be in the format
 seconds: <number of seconds>
@@ -40,7 +40,7 @@ seconds: <number of seconds>
 game_state_prompt = """
 The most recent card played was {last_played_card}
 You have {hand} in your hand and your next card to be played is {next_card}
-There are {num_other_cards} remaining around the table
+There are {num_other_cards} cards remaining around the table
 """
 
 
@@ -171,7 +171,7 @@ def parse_message(message):
 Game History:
 {history_string}
 
-Your Current Notes:
+Your Current Strategy Notes:
 {self.notes}
 
 Based on the game history, please analyze your performance and provide an updated, concise strategy to improve your play in the next game. Your notes should be a list of rules or heuristics. Your response should only be the updated notes.
