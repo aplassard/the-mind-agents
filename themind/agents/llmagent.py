@@ -88,7 +88,7 @@ class LLMAgent(Agent):
     def __init__(
         self,
         name: str,
-        model_name: str,
+        model_name: str = "openai/gpt-4.1-mini",
     ):
         """Initializes the LLMAgent.
 
