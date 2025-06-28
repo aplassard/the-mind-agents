@@ -37,12 +37,13 @@ def test_review_game_with_empty_hand():
         pytest.fail("review_game raised a KeyError when a player has an empty hand.")
 
     # Test that the player's hand is printed correctly
-    import io
-    from contextlib import redirect_stdout
+    from unittest.mock import patch
 
-    f = io.StringIO()
-    with redirect_stdout(f):
+    with patch('logging.info') as mock_logging:
         game.print_game_review("Player 1")
-    output = f.getvalue()
+        
+        # Get the actual output from the mock
+        actual_output = mock_logging.call_args[0][0]
 
-    assert "Your Hand: []" in output
+        # Assert that the expected strings are in the actual output
+        assert "Your Hand: []" in actual_output

@@ -104,11 +104,11 @@ def test_game_review(mock_deal: MagicMock):
     # Assert
     assert not game.game_over
 
-    with patch('builtins.print') as mock_print:
+    with patch('logging.info') as mock_logging:
         game.print_game_review("p2", game_number=1)
         
         # Get the actual output from the mock
-        actual_output = mock_print.call_args[0][0]
+        actual_output = mock_logging.call_args[0][0]
 
         # Assert that the expected strings are in the actual output
         assert "Game 1:" in actual_output
