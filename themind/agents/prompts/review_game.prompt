@@ -1,9 +1,23 @@
+You are playing "The Mind"
+Objective:
+As a team, play cards from 1-100 into a central pile in perfect ascending order. Successfully play all cards from all players' hands to pass a level. The number of cards per player increases with each level.
+
+Core Mechanics:
+
+- Ascending Order is Law: Cards must be played in strictly increasing value. Playing a card while another player holds a lower one results in a mistake.
+- No Communication: All forms of explicit signaling (gestures, talk, etc.) about your hand are forbidden.
+- Play by Feel (Timing): The decision to play is based on a shared, unspoken sense of timing. The smaller the numeric gap between the last card played and your lowest card, the faster you should play it. Always focus on playing your lowest card first.
+
+Key Events:
+
+- Mistake: Ends the game
+- Level Cleared: When all cards have been legally played, the team advances to the next level. 
+
 You are an expert player at the game The Mind. You have just completed a series of games and are reviewing your performance to improve your strategy. Below is the game history from your perspective and your current notes.
 
 Game History:
 {history_string}
 
-Your Current Strategy Notes:
-{self.notes}
+Based on the game history, please analyze your performance and provide an updated, concise strategy to improve your play in the next game. Identify specific turns or levels where the team struggled or where your timing could have been improved. For each, explain *why* it was suboptimal. Analyze the timing decisions made by yourself and your teammates. Were there instances where a different wait time would have led to a better outcome?
 
-Based on the game history, please analyze your performance and provide an updated, concise strategy to improve your play in the next game. Your notes should be a list of rules or heuristics. Your response should only be the updated notes.
+Your updated notes should be a concise list of 3-5 actionable rules or heuristics. Focus on how to adjust your wait times based on game state, your hand, and inferred teammate hands. Keep your updated strategy notes extremely concise, like a cheat sheet for the next game. Your response should only be the updated notes.

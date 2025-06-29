@@ -13,13 +13,19 @@ Key Events:
 - Mistake: Ends the game
 - Level Cleared: When all cards have been legally played, the team advances to the next level. 
 
+Your current strategy notes are
+{notes}
+
 The current state of the game is 
 {game_state}
 
-How many seconds do you want to wait before playing your next card? Your response should be an integer number of seconds
+Consider your lowest card in relation to the last_played_card. If your card is very close to the last_played_card, you should wait less. If it's significantly higher, you should wait more, allowing lower cards from other players to be played first. Remember, your wait time is your only signal.
 
-Your current strategy notes are
-{notes}
+Your chosen wait time communicates information to your teammates. A short wait suggests you have a low card ready to play soon. A long wait suggests your lowest card is relatively high, giving others with lower cards time to play.
+
+The num_other_cards indicates how many cards are still in play among your teammates. If this number is high, there's a greater chance someone else has a lower card than yours, so you might need to wait longer. If it's low, you might need to be quicker.
+
+How many seconds do you want to wait before playing your next card? Your response should be an integer number of seconds
 
 Your response should be in the format
 seconds: <number of seconds>
