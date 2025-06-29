@@ -15,9 +15,10 @@ def main():
 
     log_level_str = config.get("log_level", "INFO").upper()
     log_level = getattr(logging, log_level_str, logging.INFO)
-    logging.basicConfig(level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=log_level)#, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.getLogger('langchain_openai').setLevel(logging.CRITICAL)
     logging.getLogger('langchain_core').setLevel(logging.CRITICAL)
+    logging.getLogger('httpcore').setLevel(logging.CRITICAL)
 
     game_name = config.get("game_name", "The Mind Game")
     agents_config = config.get("agents", [])
