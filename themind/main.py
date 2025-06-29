@@ -5,6 +5,15 @@ from .agents import AGENT_REGISTRY
 from .agents.team import Team
 from .game import Game
 
+def setup_logging(log_level_str: str):
+    log_level = getattr(logging, log_level_str, logging.INFO)
+    logging.basicConfig(level=log_level)#, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.getLogger('langchain_openai').setLevel(logging.CRITICAL)
+    logging.getLogger('langchain_core').setLevel(logging.CRITICAL)
+    logging.getLogger('httpcore').setLevel(logging.CRITICAL)
+    logging.getLogger('httpx').setLevel(logging.CRITICAL)
+    logging.getLogger('openai').setLevel(logging.CRITICAL)
+
 def main():
     parser = argparse.ArgumentParser(description="Run The Mind game with a specified configuration.")
     parser.add_argument("config_file", help="Path to the YAML configuration file.")
@@ -14,12 +23,7 @@ def main():
         config = yaml.safe_load(f)
 
     log_level_str = config.get("log_level", "INFO").upper()
-    log_level = getattr(logging, log_level_str, logging.INFO)
-    logging.basicConfig(level=log_level)#, format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.getLogger('langchain_openai').setLevel(logging.CRITICAL)
-    logging.getLogger('langchain_core').setLevel(logging.CRITICAL)
-    logging.getLogger('httpcore').setLevel(logging.CRITICAL)
-    logging.getLogger('httpx').setLevel(logging.CRITICAL)
+    setup_logging(log_level_str)
 
     game_name = config.get("game_name", "The Mind Game")
     agents_config = config.get("agents", [])
