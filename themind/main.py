@@ -19,6 +19,7 @@ def main():
     logging.getLogger('langchain_openai').setLevel(logging.CRITICAL)
     logging.getLogger('langchain_core').setLevel(logging.CRITICAL)
     logging.getLogger('httpcore').setLevel(logging.CRITICAL)
+    logging.getLogger('httpx').setLevel(logging.CRITICAL)
 
     game_name = config.get("game_name", "The Mind Game")
     agents_config = config.get("agents", [])
