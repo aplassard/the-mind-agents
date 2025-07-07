@@ -1,15 +1,15 @@
 game_name: "Three Perfect Players and an LLM"
 log_level: "DEBUG"
-num_games: 50
+num_games: 10
 results_dir: "./results"
 agents:
   - type: PerfectAgent
-    name: "Perfect Player 1"
+    name: "Player 1"
   - type: PerfectAgent
-    name: "Perfect Player 2"
+    name: "Player 2"
   - type: PerfectAgent
-    name: "Perfect Player 3"
+    name: "Player 3"
   - type: LLMAgent
-    name: "LLM Player 4"
+    name: "Player 4"
     params:
-      model_name: "openai/gpt-4.1-mini"
+      model_name: "deepseek/deepseek-r1-0528:free"
